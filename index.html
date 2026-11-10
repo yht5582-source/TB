@@ -59,7 +59,7 @@ function assess(s){
    else if(s.site!=='pulmonary'){treatment.duration='多數肺外部位6–9個月';treatment.lines.push('成人肺外結核不自動套用 rifapentine 四個月方案。');}
    if(s.pzaUse==='no'){treatment.duration='H／R敏感者通常總療程9個月';treatment.lines.push('無法使用 Z：標準縮短療程條件不成立，需重訂延長方案。');}
    if(s.image==='cavity'&&s.month2==='positive'&&s.site==='pulmonary'){treatment.duration='標準六個月方案通常延長為9個月';treatment.lines.push('起始空洞＋治療滿2個月培養仍陽性：H／R 延續期通常延至7個月；同時排查服藥、藥敏及吸收。');}
-   const req=[['年齡需≥12歲',age!==null&&age>=12],['體重需≥40 kg',w!==null&&w>=40],['限一般肺結核',s.site==='pulmonary'],['H／R／Z／FQ均需確認敏感',s.inh==='sensitive'&&s.rif==='sensitive'&&s.pza==='sensitive'&&s.fq==='sensitive'],['需確認無懷孕或哺乳',s.preg==='no'&&s.breast==='no'],['需確認無QT延長／相關併用藥',s.qt==='no'],['需完成交互作用審查',s.ddi==='no'],['需確認無嚴重肝病',s.liver==='no'],['腎功能及透析狀態需完整；CKD須先專家諮詢',cr!==null&&cr>=60&&s.hd==='no'&&s.pd==='no'],['需確認無近期結核／FQ暴露或既往治療疑慮',s.prior==='no'&&s.past==='no'],['HIV狀態與ART相容性需確認',s.hiv==='no'||(s.hiv==='yes'&&num(s,'cd4')>=100&&s.art==='yes')],['需可使用Z',s.pzaUse==='yes'],['第2個月仍陽性者先釐清反應',s.month2!=='positive']];
+   const req=[['需確認無急症警訊',['resp','shock','hemoptysis','neuro'].every(k=>s[k]==='no')],['年齡需≥12歲',age!==null&&age>=12],['體重需≥40 kg',w!==null&&w>=40],['限一般肺結核',s.site==='pulmonary'],['H／R／Z／FQ均需確認敏感',s.inh==='sensitive'&&s.rif==='sensitive'&&s.pza==='sensitive'&&s.fq==='sensitive'],['需確認無懷孕或哺乳',s.preg==='no'&&s.breast==='no'],['需確認無QT延長／相關併用藥',s.qt==='no'],['需完成交互作用審查',s.ddi==='no'],['需確認無嚴重肝病',s.liver==='no'],['腎功能及透析狀態需完整；CKD須先專家諮詢',cr!==null&&cr>=60&&s.hd==='no'&&s.pd==='no'],['需確認無近期結核／FQ暴露或既往治療疑慮',s.prior==='no'&&s.past==='no'],['HIV狀態與ART相容性需確認',s.hiv==='no'||(s.hiv==='yes'&&num(s,'cd4')>=100&&s.art==='yes')],['需可使用Z',s.pzaUse==='yes'],['第2個月仍陽性者先釐清反應',s.month2!=='positive']];
    shortReasons=req.filter(x=>!x[1]).map(x=>x[0]);
    if(!shortReasons.length){treatment.short=true;treatment.lines.push('另符合四個月候選篩選：2HPZM／2HPM（8週＋9週，共119劑）。可與病人討論，最終由醫師確認；不是直接縮短HRZE。');}
    if(age!==null&&age>=0.25&&age<=16&&s.child==='yes'&&s.rif==='sensitive'&&s.inh==='sensitive'&&s.pzaUse==='yes'&&s.image!=='cavity'&&s.image!=='miliary'&&!['cns','bone'].includes(s.site)&&s.severity==='nonsevere'&&s.month2!=='positive'){
@@ -87,7 +87,7 @@ function assess(s){
  if(isYes(s,'vision'))actions.unshift('出現視力／色覺改變：立即停EMB，緊急眼科與結核團隊評估。');
  if(s.month2==='negative')actions.push('第2個月培養轉陰為有利反應，但仍需完成足量療程；不能提早自行停藥。');
  const dose=[];
- if(active&&treatment.kind==='ds'&&age!==null&&age>=18&&w!==null&&cr!==null&&['yes','no'].includes(s.hd)&&['yes','no'].includes(s.pd)){
+ if(active&&treatment.kind==='ds'&&age!==null&&age>=18&&w!==null&&w>=30&&w<=90&&cr!==null&&['yes','no'].includes(s.hd)&&['yes','no'].includes(s.pd)){
   dose.push(['H · Isoniazid',`${Math.min(300,Math.round(w*5))} mg，每日（5 mg/kg，上限300 mg）`,'肝毒性、周邊神經；高風險者B6 25–50 mg/day']);
   dose.push(['R · Rifampicin',`${Math.min(600,Math.round(w*10))} mg，每日（10 mg/kg，依美國一般標準上限600 mg）`,'核對交互作用、肝功能；製劑需藥師確認']);
   if(s.pzaUse!=='no')dose.push(['Z · Pyrazinamide',isYes(s,'pd')?'PD需個別化劑量及必要時TDM；不直接套用HD表':renal?`${Math.round(w*25)}–${Math.round(w*35)} mg／次，每週3次`:`${Math.round(w*20)}–${Math.round(w*25)} mg，每日（20–25 mg/kg）`,'肝毒性、高尿酸；實際錠數依體重帶確認']);
@@ -140,8 +140,8 @@ const list=a=>`<ul>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
 function resultHTML(r){
  let html=`<div class="result"><p class="label">療程建議</p><h3>${esc(r.treatment.title)}</h3><p class="duration">${esc(r.treatment.duration)}</p>${list(r.treatment.lines)}</div>`;
  if(r.treatment.kind==='ds')html+=`<details ${r.treatment.short?'open':''}><summary>成人四個月方案資格：${r.treatment.short?'符合候選篩選':'尚未符合／需補資料'}</summary>${r.shortReasons.length?list(r.shortReasons):'<p>候選方案H＋rifapentine＋Z＋moxifloxacin，8週後改H＋rifapentine＋moxifloxacin再9週。須確認藥物供應、當地規範及醫師最終審查。</p>'}<p>有CKD、近期暴露或肺外病灶者，本工具採保守篩選並轉專家評估；不代表絕對禁忌。兒童4個月方案為另一套資格。</p></details>`;
- if(r.dose.length)html+=`<h3>成人一般標準方案：體重換算</h3><p class="note">僅供處方核對；非電子處方。依可用錠劑調整前需藥師確認。短療程／二線藥請另循專責處方；Z不可用者勿照表給Z。</p><div class="table-wrap"><table><thead><tr><th>藥物</th><th>參考劑量</th><th>監測</th></tr></thead><tbody>${r.dose.map(d=>`<tr>${d.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
- if(r.active&&r.treatment.kind==='ds'&&!r.dose.length)html+='<p class="callout">請補年齡、體重、CrCl與透析狀態後顯示成人劑量。未滿18歲採兒童體重劑量，須由兒科確認，不套用本成人表。</p>';
+ if(r.dose.length)html+=`<h3>成人一般標準方案：體重換算</h3><p class="note">僅供一般體型成人處方核對；非電子處方。肥胖／極低體重需確認計量體重及TDM。依可用錠劑調整前需藥師確認。短療程／二線藥請另循專責處方；Z不可用者勿照表給Z。</p><div class="table-wrap"><table><thead><tr><th>藥物</th><th>參考劑量</th><th>監測</th></tr></thead><tbody>${r.dose.map(d=>`<tr>${d.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+ if(r.active&&r.treatment.kind==='ds'&&!r.dose.length)html+='<p class="callout">請補年齡、體重、CrCl與透析狀態後顯示成人劑量。未滿18歲或體重超出本表30–90kg範圍者，需專科／藥師個別化，不套用本成人表。</p>';
  if(r.renal)html+='<p class="callout">腎臟重點：H／R通常維持每日劑量；嚴重腎功能不全時Z／E延長間隔。HD日透析後給藥；PD不能直接照搬HD表，需個別化及必要時TDM。固定複方可能不適合不同給藥間隔。</p>';
  html+='<p class="source">依據：WHO 2026／2025、ATS 2025／2016、CDC 4個月資格及LTBI指引。國際推薦不等同台灣公費核准；開方前核對疾管署現行規範。</p>';return html;
 }
