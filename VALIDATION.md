@@ -3,7 +3,7 @@
 ## Passed
 
 - JavaScript syntax checks: engine.js, ui.js, learning.js.
-- 66 deterministic clinical and content checks (`node tests/clinical.test.cjs`; v1.1 run under JavaScriptCore with a small require shim).
+- 78 deterministic clinical and content checks (`node tests/clinical.test.cjs`; v1.1 run under JavaScriptCore with a small require shim).
 - All 12 demonstrations have expected diagnostic categories and teaching notes.
 - Unknown data and unresolved contraindications do not automatically qualify a patient for the 17-week regimen.
 - IGRA alone does not diagnose active disease; conflicting active/latent inputs block preventive treatment routing.
@@ -24,6 +24,12 @@
 - Treatment title no longer says "標準6個月療程" when the duration is extended; CNS duration kept when Z is unavailable; miliary and HIV prompts added.
 - UI: invalid number input clears the value instead of silently keeping the previous one; demo/reset only touch form fields; print summary expands collapsed sections; sticky live status bar below 1100 px; 16 px mobile inputs (no iOS zoom); quiz moves focus to the explanation.
 - Live browser check (localhost) of all 12 demos, quiz, mind map and invalid input: no console errors.
+
+## v1.2 content expansion (2026-11-11)
+
+- 6 new demos (INH-resistant, pregnancy, child lymph node, prior-treated NAAT+, pleural clinical diagnosis, PD) with pathway-specific tests.
+- 40 questions (20 basic, 20 advanced, unique stems, valid refs); quiz counts and per-level scores computed from the data; jump menu.
+- Mind map: 15 branches, >100 leaves, keyword search. Browser-checked on desktop and 375 px (no overflow, no console errors).
 
 ## Verification limit
 
