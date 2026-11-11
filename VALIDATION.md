@@ -3,7 +3,7 @@
 ## Passed
 
 - JavaScript syntax checks: engine.js, ui.js, learning.js.
-- 78 deterministic clinical and content checks (`node tests/clinical.test.cjs`; v1.1 run under JavaScriptCore with a small require shim).
+- 81 deterministic clinical and content checks (`node tests/clinical.test.cjs`; v1.1 run under JavaScriptCore with a small require shim).
 - All 12 demonstrations have expected diagnostic categories and teaching notes.
 - Unknown data and unresolved contraindications do not automatically qualify a patient for the 17-week regimen.
 - IGRA alone does not diagnose active disease; conflicting active/latent inputs block preventive treatment routing.
@@ -30,6 +30,12 @@
 - 6 new demos (INH-resistant, pregnancy, child lymph node, prior-treated NAAT+, pleural clinical diagnosis, PD) with pathway-specific tests.
 - 40 questions (20 basic, 20 advanced, unique stems, valid refs); quiz counts and per-level scores computed from the data; jump menu.
 - Mind map: 15 branches, >100 leaves, keyword search. Browser-checked on desktop and 375 px (no overflow, no console errors).
+
+## v1.3 layout consolidation (2026-11-11)
+
+- One top tab bar (assessment, cases, quiz, mind map, sources) replaces header buttons, sidebar buttons and modal dialogs; hash deep links.
+- Cases grouped as cards (basic 8 / complex 4 / advanced 6); quiz ordered basic 1–20, advanced 21–40 with progress bar; mind map's 15 branches grouped into 4 step-aligned blocks, each placed exactly once (tested).
+- Browser-checked at desktop and 375 px: all five views without horizontal overflow, no console errors.
 
 ## Verification limit
 
